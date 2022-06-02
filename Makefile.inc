@@ -6,7 +6,7 @@
 # License: GNU GPL v2 (see License.txt)
 
 F_CPU = 16000000
-DEVICE = atmega8
+DEVICE = atmega328p
 
 # where the updating firmware should be located (starting address)
 FLASHADDRESS = 0x0000
@@ -28,7 +28,6 @@ DEFINES += -DCONFIG_NO__CHIP_ERASE -DCONFIG_NO__ONDEMAND_PAGEERASE -DCONFIG_NO__
 ;DEFINES += -DCONFIG_HAVE__BOOTLOADER_IGNOREPROGBUTTON
 
 
-
 # some MCUs with small BLS (bootloader section) need to deactivate some
 # features in order to fit into BLS.
 # If this option is enabled, also essential features may become deactivated
@@ -36,15 +35,13 @@ DEFINES += -DCONFIG_NO__CHIP_ERASE -DCONFIG_NO__ONDEMAND_PAGEERASE -DCONFIG_NO__
 DANGEROUS=0
 
 # PROGRAMMER contains AVRDUDE options to address your programmer
-# PROGRAMMER = -c pony-stk200
 PROGRAMMER = -c usbasp
 
 #  since USBaspLoader supports HAVE_BLB11_SOFTW_LOCKBIT...
 LOCKOPT = -U lock:w:0x3f:m
 
-
-
-
+# added port definition for AVRDUDE
+PORT = -P /dev/ttyACM0
 
 #untested devices (WARNING: may destroy ISP ability!)
 #device always should select maximum bootloader-section size
@@ -54,6 +51,7 @@ LOCKOPT = -U lock:w:0x3f:m
 #ATTANTION: CONFIG_NO... feature deactivation may not be optimal!
 
 FUSEOPT_8535            = -U lfuse:w:0x1f:m -U hfuse:w:0xc0:m
+
 BOOTLOADER_ADDRESS_8535 = 0x1800
 DEFINES_8535            = -DCONFIG_USE__EXCESSIVE_ASSEMBLER -DCONFIG_NO__NEED_WATCHDOG -DCONFIG_NO__PRECISESLEEP
 
@@ -353,8 +351,7 @@ NEW_BOOTLOADER_ADDRESS = $(BOOTLOADER_ADDRESS)
 
 # Tools:
 AVRPATH = $(AVR8TOOLCHAINBINDIR)
-AVRDUDE = $(AVRDUDEBINDIR)avrdude $(PROGRAMMER) -p $(DEVICE)
-
+AVRDUDE = $(AVRDUDEBINDIR)avrdude $(PROGRAMMER) -p $(DEVICE) $(PORT) 
 # Platform
 # Check operative system.
 # Check if we are on Windows.
